@@ -7,14 +7,19 @@ use crate::futures::market::FuturesMarket;
 use crate::futures::userstream::FuturesUserStream;
 use crate::general::General;
 use crate::market::Market;
-use crate::userstream::UserStream;
+use crate::portfolio_margin::account::PortfolioMarginAccount;
 use crate::savings::Savings;
+use crate::userstream::UserStream;
+
+use super::futures_cm::market::FuturesCMMarket;
 
 #[allow(clippy::all)]
 pub enum API {
     Spot(Spot),
     Savings(Sapi),
     Futures(Futures),
+    FuturesCM(FuturesCM),
+    PortfolioMargin(PortfolioMargin),
 }
 
 /// Endpoint for production and test orders.
@@ -95,6 +100,29 @@ pub enum Futures {
     Income,
 }
 
+pub enum FuturesCM {
+    Klines,
+}
+
+pub enum PortfolioMargin {
+    Account,
+    Balance,
+    OpenOrdersUM,
+    ConditionalOpenOrdersUM,
+    OpenOrdersCM,
+    ConditionalOpenOrdersCM,
+    PositionRiskUM,
+    PositionRiskCM,
+    OrderUM,
+    OrderCM,
+    ConditionalOrderUM,
+    ConditionalOrderCM,
+    CancelAllOpenOrdersUM,
+    CancelAllOpenOrdersCM,
+    CancelAllConditionalOpenOrdersUM,
+    CancelAllConditionalOpenOrdersCM,
+}
+
 impl From<API> for String {
     fn from(item: API) -> Self {
         String::from(match item {
@@ -169,6 +197,31 @@ impl From<API> for String {
                 Futures::OpenOrders => "/fapi/v1/openOrders",
                 Futures::UserDataStream => "/fapi/v1/listenKey",
                 Futures::Income => "/fapi/v1/income",
+            },
+            API::FuturesCM(route) => match route {
+                FuturesCM::Klines => "/dapi/v1/klines",
+            },
+            API::PortfolioMargin(route) => match route {
+                PortfolioMargin::Account => "/papi/v1/account",
+                PortfolioMargin::Balance => "/papi/v1/balance",
+                PortfolioMargin::OpenOrdersUM => "/papi/v1/um/openOrders",
+                PortfolioMargin::OpenOrdersCM => "/papi/v1/cm/openOrders",
+                PortfolioMargin::ConditionalOpenOrdersUM => "/papi/v1/um/conditional/openOrders",
+                PortfolioMargin::ConditionalOpenOrdersCM => "/papi/v1/cm/conditional/openOrders",
+                PortfolioMargin::PositionRiskUM => "/papi/v1/um/positionRisk",
+                PortfolioMargin::PositionRiskCM => "/papi/v1/cm/positionRisk",
+                PortfolioMargin::OrderUM => "/papi/v1/um/order",
+                PortfolioMargin::OrderCM => "/papi/v1/cm/order",
+                PortfolioMargin::ConditionalOrderUM => "/papi/v1/um/conditional/order",
+                PortfolioMargin::ConditionalOrderCM => "/papi/v1/cm/conditional/order",
+                PortfolioMargin::CancelAllOpenOrdersUM => "/papi/v1/um/allOpenOrders",
+                PortfolioMargin::CancelAllOpenOrdersCM => "/papi/v1/cm/allOpenOrders",
+                PortfolioMargin::CancelAllConditionalOpenOrdersUM => {
+                    "/papi/v1/um/conditional/allOpenOrders"
+                }
+                PortfolioMargin::CancelAllConditionalOpenOrdersCM => {
+                    "/papi/v1/cm/conditional/allOpenOrders"
+                }
             },
         })
     }
@@ -328,6 +381,44 @@ impl Binance for FuturesUserStream {
                 api_key,
                 secret_key,
                 config.futures_rest_api_endpoint.clone(),
+            ),
+            recv_window: config.recv_window,
+        }
+    }
+}
+
+impl Binance for PortfolioMarginAccount {
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> Self {
+        Self::new_with_config(api_key, secret_key, &Config::default())
+    }
+
+    fn new_with_config(
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,
+    ) -> Self {
+        Self {
+            client: Client::new(
+                api_key,
+                secret_key,
+                config.portfolio_margin_rest_api_endpoint.clone(),
+            ),
+            recv_window: config.recv_window,
+        }
+    }
+}
+
+impl Binance for FuturesCMMarket {
+    fn new(api_key: Option<String>, secret_key: Option<String>) -> Self {
+        Self::new_with_config(api_key, secret_key, &Config::default())
+    }
+
+    fn new_with_config(
+        api_key: Option<String>, secret_key: Option<String>, config: &Config,
+    ) -> Self {
+        Self {
+            client: Client::new(
+                api_key,
+                secret_key,
+                config.futures_cm_rest_api_endpoint.clone(),
             ),
             recv_window: config.recv_window,
         }

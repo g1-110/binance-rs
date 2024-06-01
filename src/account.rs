@@ -65,6 +65,7 @@ impl Display for OrderType {
     }
 }
 
+#[derive(Clone)]
 pub enum OrderSide {
     Buy,
     Sell,

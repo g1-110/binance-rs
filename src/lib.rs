@@ -31,3 +31,5 @@ pub mod userstream;
 pub mod websockets;
 
 pub mod futures;
+pub mod futures_cm;
+pub mod portfolio_margin;
