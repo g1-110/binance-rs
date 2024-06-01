@@ -146,7 +146,7 @@ impl FuturesMarket {
     // https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#klinecandlestick-data
     pub fn get_klines<S1, S2, S3, S4, S5>(
         &self, symbol: S1, interval: S2, limit: S3, start_time: S4, end_time: S5,
-    ) -> Result<KlineSummaries>
+    ) -> Result<Vec<KlineSummary>>
     where
         S1: Into<String>,
         S2: Into<String>,
