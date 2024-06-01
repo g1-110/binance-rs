@@ -53,11 +53,10 @@ impl FuturesCMMarket {
             .client
             .get(API::FuturesCM(FuturesCM::Klines), Some(request))?;
 
-        let klines = KlineSummaries::AllKlineSummaries(
-            data.iter()
-                .map(|row| row.try_into())
-                .collect::<Result<Vec<KlineSummary>>>()?,
-        );
+        let klines = data
+            .iter()
+            .map(|row| row.try_into())
+            .collect::<Result<Vec<KlineSummary>>>()?;
 
         Ok(klines)
     }

@@ -22,8 +22,8 @@
 
 use crate::util::{build_request, build_signed_request};
 use crate::futures::model::{
-    AggTrades, BookTickers, KlineSummaries, KlineSummary, LiquidationOrders, MarkPrices,
-    OpenInterest, OpenInterestHist, OrderBook, PriceStats, SymbolPrice, Tickers, Trades,
+    AggTrades, BookTickers, KlineSummary, LiquidationOrders, MarkPrices, OpenInterest,
+    OpenInterestHist, OrderBook, PriceStats, SymbolPrice, Tickers, Trades,
 };
 use crate::client::Client;
 use crate::errors::Result;
@@ -176,11 +176,10 @@ impl FuturesMarket {
             .client
             .get(API::Futures(Futures::Klines), Some(request))?;
 
-        let klines = KlineSummaries::AllKlineSummaries(
-            data.iter()
-                .map(|row| row.try_into())
-                .collect::<Result<Vec<KlineSummary>>>()?,
-        );
+        let klines = data
+            .iter()
+            .map(|row| row.try_into())
+            .collect::<Result<Vec<KlineSummary>>>()?;
 
         Ok(klines)
     }
