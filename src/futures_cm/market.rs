@@ -18,7 +18,7 @@ pub struct FuturesCMMarket {
     pub recv_window: u64,
 }
 
-impl FuturesCMMarket {
+pub impl FuturesCMMarket {
     // Returns up to 'limit' klines for given symbol and interval ("1m", "5m", ...)
     // https://github.com/binance-exchange/binance-official-api-docs/blob/master/rest-api.md#klinecandlestick-data
     pub fn get_klines<S1, S2, S3, S4, S5>(
