@@ -24,7 +24,7 @@ impl Client {
             secret_key: secret_key.unwrap_or_default(),
             host,
             inner_client: reqwest::blocking::Client::builder()
-                .pool_idle_timeout(None)
+                .pool_idle_timeout(60)
                 .build()
                 .unwrap(),
         }
