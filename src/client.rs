@@ -1,3 +1,5 @@
+use std::time::Duration;
+
 use error_chain::bail;
 use hex::encode as hex_encode;
 use hmac::{Hmac, Mac};
@@ -24,7 +26,7 @@ impl Client {
             secret_key: secret_key.unwrap_or_default(),
             host,
             inner_client: reqwest::blocking::Client::builder()
-                .pool_idle_timeout(60)
+                .pool_idle_timeout(Duration::from_secs(60))
                 .build()
                 .unwrap(),
         }
