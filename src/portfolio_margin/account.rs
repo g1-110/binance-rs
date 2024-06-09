@@ -97,6 +97,19 @@ impl Display for TimeInForce {
 }
 
 #[derive(Clone)]
+pub enum ResponseType {
+    Ack,
+    Result,
+}
+impl Display for ResponseType {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::Ack => write!(f, "ACK"),
+            Self::Result => write!(f, "RESULT"),
+        }
+    }
+}
+#[derive(Clone)]
 pub struct OrderRequest {
     pub new_client_order_id: String,
     pub symbol: String,
@@ -112,6 +125,7 @@ pub struct OrderRequest {
     pub callback_rate: Option<f64>,
     pub working_type: Option<WorkingType>,
     pub price_protect: Option<f64>,
+    pub response_type: Option<ResponseType>,
 }
 impl OrderRequest {
     pub fn with_defaults(
@@ -132,6 +146,7 @@ impl OrderRequest {
             callback_rate: None,
             working_type: None,
             price_protect: None,
+            response_type: None,
         }
     }
 }
@@ -244,7 +259,9 @@ impl PortfolioMarginAccount {
                 price_protect.to_string().to_uppercase(),
             );
         }
-
+        if let Some(response_type) = order.response_type {
+            parameters.insert("newOrderRespType".into(), response_type.to_string());
+        }
         parameters
     }
 
