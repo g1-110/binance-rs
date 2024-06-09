@@ -97,7 +97,7 @@ impl Display for TimeInForce {
 }
 
 #[derive(Clone)]
-struct OrderRequest {
+pub struct OrderRequest {
     pub new_client_order_id: String,
     pub symbol: String,
     pub side: OrderSide,
@@ -113,23 +113,27 @@ struct OrderRequest {
     pub working_type: Option<WorkingType>,
     pub price_protect: Option<f64>,
 }
-
-#[derive(Clone)]
-pub struct CustomOrderRequest {
-    pub new_client_order_id: String,
-    pub symbol: String,
-    pub side: OrderSide,
-    pub position_side: Option<PositionSide>,
-    pub order_type: OrderType,
-    pub time_in_force: Option<TimeInForce>,
-    pub qty: Option<f64>,
-    pub reduce_only: Option<bool>,
-    pub price: Option<f64>,
-    pub stop_price: Option<f64>,
-    pub activation_price: Option<f64>,
-    pub callback_rate: Option<f64>,
-    pub working_type: Option<WorkingType>,
-    pub price_protect: Option<f64>,
+impl OrderRequest {
+    pub fn with_defaults(
+        new_client_order_id: String, symbol: String, side: OrderSide, order_type: OrderType,
+    ) -> Self {
+        Self {
+            new_client_order_id,
+            symbol,
+            side,
+            order_type,
+            position_side: None,
+            time_in_force: None,
+            qty: None,
+            reduce_only: None,
+            price: None,
+            stop_price: None,
+            activation_price: None,
+            callback_rate: None,
+            working_type: None,
+            price_protect: None,
+        }
+    }
 }
 
 impl PortfolioMarginAccount {
@@ -164,29 +168,13 @@ impl PortfolioMarginAccount {
     }
 
     // Custom order for for professional traders
-    pub fn custom_order(&self, order_request: CustomOrderRequest, market: String) -> Result<Order> {
-        let order = OrderRequest {
-            new_client_order_id: order_request.new_client_order_id,
-            symbol: order_request.symbol,
-            side: order_request.side,
-            position_side: order_request.position_side,
-            order_type: order_request.order_type,
-            time_in_force: order_request.time_in_force,
-            qty: order_request.qty,
-            reduce_only: order_request.reduce_only,
-            price: order_request.price,
-            stop_price: order_request.stop_price,
-            activation_price: order_request.activation_price,
-            callback_rate: order_request.callback_rate,
-            working_type: order_request.working_type,
-            price_protect: order_request.price_protect,
-        };
-        let order_params = self.build_order(order.clone());
+    pub fn post_order(&self, order_request: OrderRequest, market: String) -> Result<Order> {
+        let order_params = self.build_order(order_request.clone());
         println!("{:?}", order_params);
         let request = build_signed_request(order_params, self.recv_window)?;
 
         if market == "inverse" {
-            if [OrderType::Limit, OrderType::Market].contains(&order.order_type) {
+            if [OrderType::Limit, OrderType::Market].contains(&order_request.order_type) {
                 self.client
                     .post_signed(API::PortfolioMargin(PortfolioMargin::OrderCM), request)
             } else {
@@ -196,7 +184,7 @@ impl PortfolioMarginAccount {
                 )
             }
         } else {
-            if [OrderType::Limit, OrderType::Market].contains(&order.order_type) {
+            if [OrderType::Limit, OrderType::Market].contains(&order_request.order_type) {
                 self.client
                     .post_signed(API::PortfolioMargin(PortfolioMargin::OrderUM), request)
             } else {
@@ -260,7 +248,7 @@ impl PortfolioMarginAccount {
         parameters
     }
 
-    pub fn position_information<S>(&self, symbol: S, market: S) -> Result<Vec<PositionRisk>>
+    pub fn get_position_information<S>(&self, symbol: S, market: S) -> Result<Vec<PositionRisk>>
     where
         S: Into<String>,
     {
@@ -281,7 +269,7 @@ impl PortfolioMarginAccount {
         }
     }
 
-    pub fn account_information(&self) -> Result<AccountInformation> {
+    pub fn get_account_information(&self) -> Result<AccountInformation> {
         let parameters = BTreeMap::new();
 
         let request = build_signed_request(parameters, self.recv_window)?;
@@ -291,7 +279,7 @@ impl PortfolioMarginAccount {
         )
     }
 
-    pub fn account_balance(&self) -> Result<Vec<AccountBalance>> {
+    pub fn get_account_balance(&self) -> Result<Vec<AccountBalance>> {
         let parameters = BTreeMap::new();
 
         let request = build_signed_request(parameters, self.recv_window)?;
