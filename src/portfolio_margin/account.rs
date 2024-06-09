@@ -114,6 +114,7 @@ struct OrderRequest {
     pub price_protect: Option<f64>,
 }
 
+#[derive(Clone)]
 pub struct CustomOrderRequest {
     pub new_client_order_id: String,
     pub symbol: String,
