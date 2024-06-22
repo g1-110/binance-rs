@@ -109,7 +109,7 @@ impl Display for ResponseType {
         }
     }
 }
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub struct OrderRequest {
     pub new_client_order_id: String,
     pub symbol: String,
