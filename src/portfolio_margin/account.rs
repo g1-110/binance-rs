@@ -19,7 +19,7 @@ pub struct PortfolioMarginAccount {
     pub recv_window: u64,
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, Debug)]
 pub enum PositionSide {
     Both,
     Long,
@@ -61,7 +61,7 @@ impl Display for OrderType {
     }
 }
 
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, Debug)]
 pub enum WorkingType {
     MarkPrice,
     ContractPrice,
@@ -77,7 +77,7 @@ impl Display for WorkingType {
 }
 
 #[allow(clippy::all)]
-#[derive(Deserialize, Clone)]
+#[derive(Deserialize, Clone, Debug)]
 pub enum TimeInForce {
     GTC,
     IOC,
@@ -96,7 +96,7 @@ impl Display for TimeInForce {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, Debug)]
 pub enum ResponseType {
     Ack,
     Result,
