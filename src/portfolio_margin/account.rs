@@ -109,6 +109,21 @@ impl Display for ResponseType {
         }
     }
 }
+
+#[derive(Clone, Debug)]
+pub enum SelfTradePreventionMode {
+    Ack,
+    Result,
+}
+impl Display for SelfTradePreventionMode {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::ExpireTaker => write!(f, "EXPIRE_TAKER"),
+            Self::ExpireMaker => write!(f, "EXPIRE_MAKER"),
+            Self::ExpireBoth => write!(f, "EXPIRE_BOTH"),
+        }
+    }
+}
 #[derive(Clone, Debug)]
 pub struct OrderRequest {
     pub new_client_order_id: String,
@@ -126,6 +141,7 @@ pub struct OrderRequest {
     pub working_type: Option<WorkingType>,
     pub price_protect: Option<f64>,
     pub response_type: Option<ResponseType>,
+    pub self_trade_prevention_mode: Option<SelfTradePreventionMode>,
 }
 impl OrderRequest {
     pub fn with_defaults(
@@ -147,6 +163,7 @@ impl OrderRequest {
             working_type: None,
             price_protect: None,
             response_type: None,
+            self_trade_prevention_mode: None,
         }
     }
 }
