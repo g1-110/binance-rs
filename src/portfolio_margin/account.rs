@@ -112,8 +112,9 @@ impl Display for ResponseType {
 
 #[derive(Clone, Debug)]
 pub enum SelfTradePreventionMode {
-    Ack,
-    Result,
+    ExpireTaker,
+    ExpireMaker,
+    ExpireBoth,
 }
 impl Display for SelfTradePreventionMode {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
