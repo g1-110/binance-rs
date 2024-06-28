@@ -46,8 +46,8 @@ pub struct Order {
     // pub activate_price: Option<f64>,
     #[serde(with = "string_or_float_opt", default = "default_float")]
     pub price_rate: Option<f64>,
-    #[serde(alias = "selfTradePreventionMode")]
-    pub self_trade_prevention_mode: String,
+    #[serde(alias = "selfTradePreventionMode", default = "default_string")]
+    pub self_trade_prevention_mode: Option<String>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
