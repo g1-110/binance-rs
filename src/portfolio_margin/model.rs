@@ -42,8 +42,8 @@ pub struct Order {
     #[serde(alias = "type", alias = "strategyType")]
     pub order_type: String,
     pub update_time: u64,
-    #[serde(with = "string_or_float_opt", default = "default_float")]
-    pub activate_price: Option<f64>,
+    // #[serde(with = "string_or_float_opt", default = "default_float")]
+    // pub activate_price: Option<f64>,
     #[serde(with = "string_or_float_opt", default = "default_float")]
     pub price_rate: Option<f64>,
 }
