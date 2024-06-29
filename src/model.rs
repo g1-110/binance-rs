@@ -1349,6 +1349,8 @@ pub(crate) mod string_or_float {
         enum StringOrFloat {
             String(String),
             Float(f64),
+            Int(i64),
+            UInt(u64),
         }
 
         match StringOrFloat::deserialize(deserializer)? {
@@ -1360,6 +1362,8 @@ pub(crate) mod string_or_float {
                 }
             }
             StringOrFloat::Float(i) => Ok(i),
+            StringOrFloat::Int(i) => Ok(i as f64),
+            StringOrFloat::UInt(u) => Ok(u as f64),
         }
     }
 }
