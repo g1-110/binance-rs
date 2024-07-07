@@ -26,8 +26,8 @@ impl Client {
             secret_key: secret_key.unwrap_or_default(),
             host,
             inner_client: reqwest::blocking::Client::builder()
-                .pool_idle_timeout(Duration::from_secs(10))
-                .pool_max_idle_per_host(0)
+                .pool_idle_timeout(Duration::from_secs(60))
+                .timeout(Duration::from_secs(5))
                 .build()
                 .unwrap(),
         }
@@ -79,10 +79,7 @@ impl Client {
         }
 
         let client = &self.inner_client;
-        let response = client
-            .get(url.as_str())
-            .header("Connection", "close")
-            .send()?;
+        let response = client.get(url.as_str()).send()?;
 
         self.handler(response)
     }
