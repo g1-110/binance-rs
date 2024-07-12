@@ -46,7 +46,7 @@ pub struct Order {
     // pub activate_price: Option<f64>,
     #[serde(with = "string_or_float_opt", default = "default_float")]
     pub price_rate: Option<f64>,
-    #[serde(alias = "selfTradePreventionMode", default = "default_string")]
+    #[serde(default = "default_string")]
     pub self_trade_prevention_mode: Option<String>,
 }
 
@@ -64,7 +64,7 @@ pub struct PositionRisk {
     pub entry_price: f64,
     #[serde(with = "string_or_float")]
     pub mark_price: f64,
-    #[serde(with = "string_or_float", rename = "notionalValue")]
+    #[serde(alias = "notional", alias = "notionalValue", with = "string_or_float")]
     pub notional: f64,
     #[serde(with = "string_or_float", rename = "maxQty")]
     pub max_quantity: f64,
