@@ -397,36 +397,46 @@ impl PortfolioMarginAccount {
     {
         let mut parameters: BTreeMap<String, String> = BTreeMap::new();
         parameters.insert("symbol".into(), symbol.into());
+
         let request = build_signed_request(parameters, self.recv_window)?;
+        let mut orders: Vec<Order> = Vec::new();
         if market.into() == "inverse" {
             let mut regular_orders: Vec<Order> = self
                 .client
                 .get_signed(
                     API::PortfolioMargin(PortfolioMargin::OpenOrdersCM),
-                    Some(request),
+                    Some(request.clone()),
                 )
                 .unwrap();
-            parameters = BTreeMap::new();
-
-            let request = build_signed_request(parameters, self.recv_window)?;
+            orders.append(&mut regular_orders);
 
             let mut conditional_orders: Vec<Order> = self
                 .client
                 .get_signed(
                     API::PortfolioMargin(PortfolioMargin::ConditionalOpenOrdersCM),
-                    Some(request),
+                    Some(request.clone()),
                 )
                 .unwrap();
-
-            regular_orders.append(&mut conditional_orders);
-            Ok(regular_orders)
+            orders.append(&mut conditional_orders);
         } else {
-            let a = self.client.get_signed(
-                API::PortfolioMargin(PortfolioMargin::OpenOrdersUM),
-                Some(request),
-            );
-            println!("{:#?}", a);
-            a
+            let mut regular_orders: Vec<Order> = self
+                .client
+                .get_signed(
+                    API::PortfolioMargin(PortfolioMargin::OpenOrdersUM),
+                    Some(request.clone()),
+                )
+                .unwrap();
+            orders.append(&mut regular_orders);
+
+            let mut conditional_orders: Vec<Order> = self
+                .client
+                .get_signed(
+                    API::PortfolioMargin(PortfolioMargin::ConditionalOpenOrdersUM),
+                    Some(request.clone()),
+                )
+                .unwrap();
+            orders.append(&mut conditional_orders);
         }
+        Ok(orders)
     }
 }
