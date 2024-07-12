@@ -66,10 +66,10 @@ pub struct PositionRisk {
     pub mark_price: f64,
     #[serde(alias = "notional", alias = "notionalValue", with = "string_or_float")]
     pub notional: f64,
-    #[serde(with = "string_or_float", rename = "maxQty")]
+    #[serde(alias = "maxQty", alias = "maxNotionalValue", with = "string_or_float")]
     pub max_quantity: f64,
-    #[serde(with = "string_or_float")]
-    pub break_even_price: f64,
+    #[serde(with = "string_or_float_opt", default = "default_float")]
+    pub break_even_price: Option<f64>,
     #[serde(with = "string_or_float")]
     pub liquidation_price: f64,
     #[serde(with = "string_or_float", rename = "unRealizedProfit")]
